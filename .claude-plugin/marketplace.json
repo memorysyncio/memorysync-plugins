@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "memorysync",
+  "description": "Official MemorySync plugins for Claude Code and Claude Cowork.",
+  "owner": {
+    "name": "MemorySync",
+    "url": "https://memorysync.io"
+  },
+  "plugins": [
+    {
+      "name": "memorysync",
+      "source": "./plugins/memorysync",
+      "description": "Automatic long-term memory for Claude Code and Claude Cowork: cross-platform lifecycle hooks capture every exchange and recall relevant context per project, plus the MemorySync MCP server and memory skills.",
+      "version": "1.0.0",
+      "author": {
+        "name": "MemorySync"
+      },
+      "homepage": "https://docs.memorysync.io/guides/claude-code",
+      "category": "productivity",
+      "tags": ["memory", "agent-memory", "mcp", "context", "personalization"]
+    }
+  ]
+}

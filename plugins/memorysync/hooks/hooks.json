@@ -1,0 +1,56 @@
+{
+  "description": "MemorySync automatic memory: recall at session start and per prompt, capture of every completed exchange. Every hook exits 0 on every failure — memory being down can never break a session.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/session-start.mjs"],
+            "timeout": 15,
+            "statusMessage": "Recalling MemorySync memory"
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/session-start.mjs"],
+            "timeout": 15,
+            "statusMessage": "Re-injecting MemorySync memory after compaction"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/prompt.mjs"],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/stop.mjs"],
+            "timeout": 20,
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

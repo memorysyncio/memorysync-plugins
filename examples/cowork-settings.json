@@ -1,0 +1,14 @@
+{
+  "//": "Commit this as .claude/settings.json in your repository to give every collaborator — and every Claude Cowork cloud session — the MemorySync plugin automatically. Cloud sessions install repo-declared plugins at session start; plugins enabled only in personal settings do not transfer. Remember to add MEMORYSYNC_API_KEY to the Cloud Environment variables.",
+  "extraKnownMarketplaces": {
+    "memorysync": {
+      "source": {
+        "source": "github",
+        "repo": "memorysyncio/memorysync-plugins"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "memorysync@memorysync": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "memorysync": {
+      "type": "http",
+      "url": "https://mcp.memorysync.io/mcp",
+      "headers": {
+        "X-API-Key": "${MEMORYSYNC_API_KEY:-}"
+      }
+    },
+    "memorysync-docs": {
+      "type": "http",
+      "url": "https://docs.memorysync.io/mcp"
+    }
+  }
+}

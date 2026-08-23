@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "memorysync",
+  "displayName": "MemorySync",
+  "version": "1.0.0",
+  "description": "Automatic long-term memory for Claude Code and Claude Cowork: lifecycle hooks capture every exchange and recall relevant context per project — cross-platform (Windows, macOS, Linux) — plus the MemorySync MCP server and memory skills.",
+  "author": {
+    "name": "MemorySync",
+    "url": "https://memorysync.io"
+  },
+  "homepage": "https://docs.memorysync.io/guides/claude-code",
+  "repository": "https://github.com/memorysyncio/memorysync-plugins",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "agent-memory",
+    "long-term-memory",
+    "mcp",
+    "context",
+    "personalization",
+    "memorysync"
+  ]
+}
