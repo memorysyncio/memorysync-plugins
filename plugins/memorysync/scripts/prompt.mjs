@@ -57,7 +57,7 @@ main(async () => {
     try {
       const persister = join(dirname(fileURLToPath(import.meta.url)), 'persist-turn.mjs')
       const encoded = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64')
-      const child = spawn(process.execPath, [persister], {
+      const child = spawn(process.execPath, [persister, process.argv[2] || ''], {
         detached: true,
         stdio: 'ignore',
         env: { ...process.env, MEMORYSYNC_HOOK_PAYLOAD: encoded },

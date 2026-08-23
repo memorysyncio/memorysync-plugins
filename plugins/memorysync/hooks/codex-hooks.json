@@ -1,0 +1,55 @@
+{
+  "description": "MemorySync automatic memory for Codex: recall at session start and per prompt (injected as additional context), capture of every completed exchange. Every hook exits 0 on every failure — memory being down can never break a session.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/scripts/session-start.mjs\" codex",
+            "statusMessage": "Recalling MemorySync memory",
+            "timeout": 15,
+            "additionalContextLimit": 4000
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/scripts/session-start.mjs\" codex",
+            "statusMessage": "Re-injecting MemorySync memory after compaction",
+            "timeout": 15,
+            "additionalContextLimit": 4000
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/scripts/prompt.mjs\" codex",
+            "timeout": 10,
+            "additionalContextLimit": 3000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/scripts/codex-stop.mjs\" codex",
+            "timeout": 20,
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

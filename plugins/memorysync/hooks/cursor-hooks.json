@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeSubmitPrompt": [
+      {
+        "command": "node \"${PLUGIN_ROOT}/scripts/cursor-prompt.mjs\" cursor",
+        "timeout": 10
+      }
+    ],
+    "stop": [
+      {
+        "command": "node \"${PLUGIN_ROOT}/scripts/cursor-stop.mjs\" cursor",
+        "timeout": 20
+      }
+    ],
+    "afterAgentResponse": [
+      {
+        "command": "node \"${PLUGIN_ROOT}/scripts/cursor-stop.mjs\" cursor",
+        "timeout": 20
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "memorysync",
+  "owner": { "name": "MemorySync", "url": "https://memorysync.io" },
+  "metadata": {
+    "description": "Official MemorySync plugins for Cursor."
+  },
+  "plugins": [
+    {
+      "name": "memorysync",
+      "source": "./plugins/memorysync",
+      "description": "Automatic long-term memory for Cursor: hooks capture every exchange, a rule keeps recall on, plus the MemorySync MCP server and memory skills.",
+      "version": "1.1.0",
+      "homepage": "https://docs.memorysync.io/guides/cursor",
+      "repository": "https://github.com/memorysyncio/memorysync-plugins",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": ["memorysync", "memory", "agent-memory", "mcp", "personalization"]
+    }
+  ]
+}

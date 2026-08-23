@@ -1,6 +1,6 @@
-# MemorySync for Claude Code & Claude Cowork
+# MemorySync for Claude Code, Cursor & OpenAI Codex
 
-Automatic long-term memory for [Claude Code](https://code.claude.com) and Claude Cowork, backed by [MemorySync](https://memorysync.io).
+Automatic long-term memory for [Claude Code](https://code.claude.com) (and Claude Cowork), [Cursor](https://cursor.com), and [OpenAI Codex](https://developers.openai.com/codex) — one plugin, backed by [MemorySync](https://memorysync.io).
 
 - **Automatic capture** — lifecycle hooks persist every exchange (your prompts, Claude's replies) the moment they happen. Nothing depends on the model deciding to save.
 - **Automatic recall** — relevant memories are injected at session start, alongside every substantial prompt, and re-injected after context compaction.
@@ -12,29 +12,41 @@ Automatic long-term memory for [Claude Code](https://code.claude.com) and Claude
 ## Install
 
 ```
-# 1. Get an API key at https://app.memorysync.io, then:
+# 0. Get an API key at https://app.memorysync.io, then:
 #    macOS/Linux:  export MEMORYSYNC_API_KEY=ms_...        (add to your shell profile)
 #    Windows:      setx MEMORYSYNC_API_KEY ms_...          (new terminals pick it up)
+```
 
-# 2. In Claude Code:
+**Claude Code:**
+```
 /plugin marketplace add memorysyncio/memorysync-plugins
 /plugin install memorysync@memorysync
 ```
 
-Restart the session. That's it — the next session starts with what MemorySync knows about you, and everything you discuss is remembered. Without an API key the MCP server falls back to an OAuth sign-in and the hooks stay silently off.
+**Cursor:** import `memorysyncio/memorysync-plugins` as a team marketplace (Teams/Enterprise), or copy `plugins/memorysync` to `~/.cursor/plugins/local/memorysync` and run **Developer: Reload Window**. MCP-only alternative: `npx memorysync-mcp-install --client cursor`.
 
-Requires Node.js ≥ 18 on PATH (for the hook scripts). Verify anytime with `/memorysync:status`.
+**OpenAI Codex (CLI/IDE):**
+```
+codex plugin marketplace add memorysyncio/memorysync-plugins
+codex plugin add memorysync@memorysync
+# then trust the hooks once: run /hooks inside codex
+```
+MCP-only alternative: `codex mcp add memorysync --url https://mcp.memorysync.io/mcp --bearer-token-env-var MEMORYSYNC_API_KEY`.
 
-## What runs when
+Restart the session. Without an API key the MCP server falls back to an OAuth sign-in and the hooks stay silently off. Requires Node.js ≥ 18 on PATH for the hook scripts.
 
-| Moment | What happens |
-| --- | --- |
-| Session start / resume / clear | Recalls your profile + this project's context, injects it before the first prompt |
-| Every prompt (≥ 24 chars) | Recalls memories relevant to that prompt; persists your message in a detached process (zero added latency) |
-| Claude finishes replying | Persists the reply (`Stop` hook, async) |
-| Context compaction | Re-injects memory after the compact, so long sessions never go amnesiac |
+## What runs when (per platform)
 
-Persisted turns carry content-hash idempotency seeds — retries and replays converge on one stored row, and turns stored here can never double-store against MemorySync SDK writes.
+| Moment | Claude Code | Cursor | Codex |
+| --- | --- | --- | --- |
+| Session start | Recall injected before the first prompt | — (hooks can't inject; the bundled rule keeps recall on via MCP tools) | Recall injected before the first prompt |
+| Every prompt | Recall injected + user turn persisted (detached, zero latency) | User turn persisted (detached, zero latency) | Recall injected + user turn persisted |
+| Reply finishes | Reply persisted (async) | Reply persisted (`stop` + `afterAgentResponse`, converging seeds) | Reply persisted (async, tolerant extraction) |
+| Context compaction | Memory re-injected after compact | — | Memory re-injected after compact |
+
+Every platform gets the same guarantee: **every hook exits 0 on every failure** — no key, network down, server errors, monthly quota exhausted — and Cursor hooks additionally always answer `{"continue": true}`. A memoryless turn, never a broken session.
+
+Persisted turns carry content-hash idempotency seeds; each platform keeps its own transcript scope (`claude::`, `cursor::`, `codex::` + project) while your memories follow you across all of them.
 
 ## Configuration (env vars)
 

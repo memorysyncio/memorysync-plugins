@@ -1,0 +1,14 @@
+{
+  "name": "memorysync",
+  "version": "1.1.0",
+  "description": "Automatic long-term memory for Cursor: hooks capture every exchange, a rule keeps recall on, and the MemorySync MCP server provides search, save, list, update and delete — cross-platform, per-project scoped, session-safe.",
+  "author": { "name": "MemorySync", "url": "https://memorysync.io" },
+  "homepage": "https://docs.memorysync.io/guides/cursor",
+  "repository": "https://github.com/memorysyncio/memorysync-plugins",
+  "license": "MIT",
+  "keywords": ["memorysync", "memory", "agent-memory", "mcp", "context", "personalization"],
+  "skills": "./skills/",
+  "rules": "./rules/",
+  "hooks": "./hooks/cursor-hooks.json",
+  "mcpServers": "./.cursor-mcp.json"
+}

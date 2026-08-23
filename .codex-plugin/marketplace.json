@@ -1,0 +1,20 @@
+{
+  "name": "memorysync",
+  "interface": {
+    "displayName": "MemorySync Plugins"
+  },
+  "plugins": [
+    {
+      "name": "memorysync",
+      "source": {
+        "source": "local",
+        "path": "./plugins/memorysync"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

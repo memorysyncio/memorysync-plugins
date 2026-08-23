@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "memorysync": {
+      "url": "https://mcp.memorysync.io/mcp",
+      "bearer_token_env_var": "MEMORYSYNC_API_KEY"
+    },
+    "memorysync-docs": {
+      "url": "https://docs.memorysync.io/mcp"
+    }
+  }
+}

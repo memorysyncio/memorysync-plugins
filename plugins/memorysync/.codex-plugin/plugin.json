@@ -1,0 +1,30 @@
+{
+  "name": "memorysync",
+  "version": "1.1.0",
+  "description": "Persistent memory for Codex: hooks capture every exchange and inject recalled context per prompt, with the MemorySync MCP server for search, save, list, update and delete.",
+  "author": { "name": "MemorySync", "url": "https://memorysync.io" },
+  "homepage": "https://memorysync.io",
+  "repository": "https://github.com/memorysyncio/memorysync-plugins",
+  "license": "MIT",
+  "keywords": ["memorysync", "memory", "agent-memory", "mcp", "personalization"],
+  "skills": "./skills/",
+  "hooks": "./hooks/codex-hooks.json",
+  "mcpServers": "./.codex-mcp.json",
+  "interface": {
+    "displayName": "MemorySync",
+    "shortDescription": "Automatic long-term memory for AI coding sessions",
+    "longDescription": "MemorySync gives Codex durable memory: lifecycle hooks persist every prompt and reply the moment they happen and inject relevant memories at session start and per prompt — scoped to you and your repository, session-safe by contract (memory being down can never break a session). Includes the full MemorySync MCP tool set.",
+    "developerName": "MemorySync",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://memorysync.io",
+    "privacyPolicyURL": "https://memorysync.io/privacy",
+    "termsOfServiceURL": "https://memorysync.io/terms",
+    "defaultPrompt": [
+      "What do you remember about this project?",
+      "Remember that I prefer small, focused pull requests",
+      "Search my memories for decisions about the API design"
+    ],
+    "brandColor": "#0EA5E9"
+  }
+}
