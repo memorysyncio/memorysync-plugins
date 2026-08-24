@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "memorysync-docs": {
+      "type": "http",
+      "url": "https://docs.memorysync.io/mcp"
+    }
+  }
+}

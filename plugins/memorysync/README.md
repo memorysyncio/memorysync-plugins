@@ -1,6 +1,6 @@
-# MemorySync for Claude Code, Cursor & OpenAI Codex
+# MemorySync for Claude Code, Cursor, OpenAI Codex & Devin
 
-Automatic long-term memory for [Claude Code](https://code.claude.com) (and Claude Cowork), [Cursor](https://cursor.com), and [OpenAI Codex](https://developers.openai.com/codex) — one plugin, backed by [MemorySync](https://memorysync.io).
+Automatic long-term memory for [Claude Code](https://code.claude.com) (and Claude Cowork), [Cursor](https://cursor.com), [OpenAI Codex](https://developers.openai.com/codex), and the [Devin CLI](https://docs.devin.ai) (formerly Windsurf) — one plugin, backed by [MemorySync](https://memorysync.io).
 
 - **Automatic capture** — lifecycle hooks persist every exchange (your prompts, Claude's replies) the moment they happen. Nothing depends on the model deciding to save.
 - **Automatic recall** — relevant memories are injected at session start, alongside every substantial prompt, and re-injected after context compaction.
@@ -33,20 +33,22 @@ codex plugin add memorysync@memorysync
 ```
 MCP-only alternative: `codex mcp add memorysync --url https://mcp.memorysync.io/mcp --bearer-token-env-var MEMORYSYNC_API_KEY`.
 
+**Devin CLI (formerly Windsurf):** copy `examples/devin/hooks.v1.json` from the repo root to `~/.config/devin/hooks.v1.json` (or a repo's `.devin/hooks.v1.json`) and point the paths at a checkout of `plugins/memorysync/scripts/` — the scripts speak Devin's Claude-shaped hook payloads under the `devin` platform argument. Recall rule for Devin Desktop: `examples/devin/rules/memorysync.md` → `.devin/rules/`. MCP-only alternative: `npx memorysync-mcp-install --client devin-desktop` (writes the current Devin path and the legacy Windsurf file when present).
+
 Restart the session. Without an API key the MCP server falls back to an OAuth sign-in and the hooks stay silently off. Requires Node.js ≥ 18 on PATH for the hook scripts.
 
 ## What runs when (per platform)
 
-| Moment | Claude Code | Cursor | Codex |
-| --- | --- | --- | --- |
-| Session start | Recall injected before the first prompt | — (hooks can't inject; the bundled rule keeps recall on via MCP tools) | Recall injected before the first prompt |
-| Every prompt | Recall injected + user turn persisted (detached, zero latency) | User turn persisted (detached, zero latency) | Recall injected + user turn persisted |
-| Reply finishes | Reply persisted (async) | Reply persisted (`stop` + `afterAgentResponse`, converging seeds) | Reply persisted (async, tolerant extraction) |
-| Context compaction | Memory re-injected after compact | — | Memory re-injected after compact |
+| Moment | Claude Code | Cursor | Codex | Devin CLI |
+| --- | --- | --- | --- | --- |
+| Session start | Recall injected before the first prompt | — (hooks can't inject; the bundled rule keeps recall on via MCP tools) | Recall injected before the first prompt | Recall injected before the first prompt |
+| Every prompt | Recall injected + user turn persisted (detached, zero latency) | User turn persisted (detached, zero latency) | Recall injected + user turn persisted | Recall injected + user turn persisted |
+| Reply finishes | Reply persisted (async) | Reply persisted (`stop` + `afterAgentResponse`, converging seeds) | Reply persisted (async, tolerant extraction) | Reply persisted (async, tolerant extraction) |
+| Context compaction | Memory re-injected after compact | — | Memory re-injected after compact | — (PostCompaction hook available; recall re-injects per prompt) |
 
 Every platform gets the same guarantee: **every hook exits 0 on every failure** — no key, network down, server errors, monthly quota exhausted — and Cursor hooks additionally always answer `{"continue": true}`. A memoryless turn, never a broken session.
 
-Persisted turns carry content-hash idempotency seeds; each platform keeps its own transcript scope (`claude::`, `cursor::`, `codex::` + project) while your memories follow you across all of them.
+Persisted turns carry content-hash idempotency seeds; each platform keeps its own transcript scope (`claude::`, `cursor::`, `codex::`, `devin::` + project) while your memories follow you across all of them.
 
 ## Configuration (env vars)
 

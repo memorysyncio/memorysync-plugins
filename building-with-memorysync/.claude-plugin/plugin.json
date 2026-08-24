@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "building-with-memorysync",
+  "displayName": "Build with MemorySync",
+  "version": "1.0.0",
+  "description": "Build and configure applications that use MemorySync. Bundles the building-with-memorysync skill (scope projects and end users, ingest, retrieve, evaluate) and the zero-auth MemorySync documentation MCP server the skill treats as ground truth.",
+  "author": {
+    "name": "MemorySync",
+    "url": "https://memorysync.io"
+  },
+  "homepage": "https://docs.memorysync.io/guides/agent-built-integrations",
+  "repository": "https://github.com/memorysyncio/memorysync-plugins",
+  "license": "MIT",
+  "keywords": ["memorysync", "agent-memory", "integration", "mcp", "skill"]
+}

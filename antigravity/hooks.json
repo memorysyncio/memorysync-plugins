@@ -1,0 +1,41 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "name": "memorysync-session-start",
+            "type": "command",
+            "command": "node \"${extensionPath}/scripts/session-start.mjs\" antigravity",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "name": "memorysync-prompt",
+            "type": "command",
+            "command": "node \"${extensionPath}/scripts/prompt.mjs\" antigravity",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "name": "memorysync-capture-reply",
+            "type": "command",
+            "command": "node \"${extensionPath}/scripts/codex-stop.mjs\" antigravity",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

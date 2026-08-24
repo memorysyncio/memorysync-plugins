@@ -1,0 +1,39 @@
+{
+  "//": "MemorySync automatic memory for the Devin CLI / Devin Desktop (formerly Windsurf). Place as .devin/hooks.v1.json in a project, or ~/.config/devin/hooks.v1.json (%APPDATA%\\devin\\hooks.v1.json on Windows) for every project. Replace <PLUGIN_SCRIPTS> with the absolute path to the plugins/memorysync/scripts folder from github.com/memorysyncio/memorysync-plugins. Requires Node.js >= 18 and MEMORYSYNC_API_KEY in the environment. Every script exits 0 on every failure - memory being down can never break a Devin session.",
+  "SessionStart": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"<PLUGIN_SCRIPTS>/session-start.mjs\" devin",
+          "timeout": 15
+        }
+      ]
+    }
+  ],
+  "UserPromptSubmit": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"<PLUGIN_SCRIPTS>/prompt.mjs\" devin",
+          "timeout": 10
+        }
+      ]
+    }
+  ],
+  "Stop": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"<PLUGIN_SCRIPTS>/codex-stop.mjs\" devin",
+          "timeout": 20
+        }
+      ]
+    }
+  ]
+}

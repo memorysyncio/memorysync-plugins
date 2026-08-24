@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "memorysync": {
+      "serverUrl": "https://mcp.memorysync.io/mcp",
+      "headers": {
+        "X-API-Key": "${MEMORYSYNC_API_KEY}"
+      }
+    },
+    "memorysync-docs": {
+      "serverUrl": "https://docs.memorysync.io/mcp"
+    }
+  }
+}

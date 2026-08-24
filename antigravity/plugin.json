@@ -1,0 +1,23 @@
+{
+  "id": "memorysync",
+  "name": "memorysync",
+  "version": "1.0.0",
+  "description": "Automatic long-term memory for Antigravity agents: lifecycle hooks recall relevant context at session start and per prompt and capture every exchange, backed by the MemorySync platform — cross-platform Node hooks (Windows, macOS, Linux), the full MemorySync MCP tool set, skills, and an always-on recall rule.",
+  "author": {
+    "name": "MemorySync",
+    "email": "support@memorysync.io"
+  },
+  "publisher": "memorysync",
+  "homepage": "https://memorysync.io",
+  "repository": "https://github.com/memorysyncio/memorysync-plugins",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "persistence",
+    "personalization",
+    "mcp",
+    "semantic-search",
+    "long-term-memory"
+  ],
+  "contextFileName": "AGENTS.md"
+}
