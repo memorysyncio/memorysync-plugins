@@ -78,6 +78,8 @@ The same plugin works in Cowork (Claude Code cloud sessions):
 
 Cloud sessions install repo-declared plugins at session start; plugins enabled only in your personal settings do not transfer. Hooks detect `$CLAUDE_CODE_REMOTE` and stay in-process where detaching is inappropriate.
 
+> **Claude Desktop's Cowork tab (local agent mode)** runs sessions in an isolated sandbox that does not execute plugin lifecycle hooks (verified Aug 2026) — settings-level environment variables never reach it, so automatic capture/recall stays off there. Use Claude Code (CLI or IDE) for automatic memory, or add the [MemorySync MCP server](https://docs.memorysync.io/mcp/overview) to Claude Desktop for on-demand memory tools.
+
 ## Privacy & coexistence
 
 - Your prompts and Claude's replies are stored verbatim in YOUR MemorySync account, scoped to you and the project. Delete anytime (`/memorysync:recall` → delete, or the dashboard).
