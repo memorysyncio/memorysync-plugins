@@ -4,7 +4,7 @@ description: Guide for building, reviewing, evaluating, and troubleshooting appl
 license: MIT
 metadata:
   author: memorysync
-  version: "1.1.0"
+  version: "1.1.1"
   docs-mcp: "https://docs.memorysync.io/mcp"
 ---
 
@@ -90,11 +90,11 @@ Pick the write path by what you need back later — confirm details via
   `metadata.session_id`. Only the durable facts the extractor finds are
   stored — asynchronously, with their own ids, carrying your scalar
   metadata — so `memory_id` is always `null` (there is no row per turn;
-  `request_id` correlates the extraction). A user turn sent to extraction
-  counts as one add. Assistant, system and tool turns store nothing
-  (`processing_status: "skipped_non_user_turn"`) and are not counted; skip
-  them client-side anyway to save the round trip. Filler ("ok", "thanks")
-  is `skipped_low_value` and not counted either. Give every turn a deterministic content-hash seed
+  `request_id` correlates the extraction). Every call counts as one add,
+  whatever it stores. Assistant, system and tool turns store nothing
+  (`processing_status: "skipped_non_user_turn"`) and filler ("ok",
+  "thanks") is `skipped_low_value`, but each still costs an add — send
+  only the user's turns. Give every turn a deterministic content-hash seed
   (the docs and every official adapter use FNV-1a 64 over the role and
   text) so a retry answers `already_exists: true` instead of being
   extracted twice.
@@ -166,8 +166,11 @@ working key with no human in the loop:
      `200 {"status": "ok"}`) and reads answer `200 {"memories": []}`. End
      users never see a quota error. Never "fix" this as if it were a bug,
      and never build UI that promises an error will announce the limit.
-   - **Refused requests are free**: a malformed body or a refused call
-     costs nothing, and neither does a turn that stores nothing.
+   - **Billing counts requests, not results**: every add call is one add
+     and every retrieval call one retrieval, whatever it stores or returns —
+     an empty search or a turn that stores nothing still counts. A refused
+     or failed request (4xx, 5xx) and a retry of a write already stored are
+     not counted.
 5. **Graduate**: the human claims the eval account (`claim_command`) or
    creates a dashboard key at `https://app.memorysync.io`. Same API,
    silent-mode quota, higher limits.
