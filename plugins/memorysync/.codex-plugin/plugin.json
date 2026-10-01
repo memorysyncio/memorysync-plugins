@@ -1,7 +1,7 @@
 {
   "name": "memorysync",
-  "version": "1.3.1",
-  "description": "Persistent memory for Codex: hooks capture every exchange and inject recalled context per prompt, with the MemorySync MCP server for search, save, list, update and delete.",
+  "version": "1.4.0",
+  "description": "Persistent memory for Codex: hooks capture the durable facts in your prompts and inject recalled context per prompt, with the MemorySync MCP server for search, save, list, update and delete.",
   "author": { "name": "MemorySync", "url": "https://memorysync.io" },
   "homepage": "https://memorysync.io",
   "repository": "https://github.com/memorysyncio/memorysync-plugins",
@@ -13,7 +13,7 @@
   "interface": {
     "displayName": "MemorySync",
     "shortDescription": "Automatic long-term memory for AI coding sessions",
-    "longDescription": "MemorySync gives Codex durable memory: lifecycle hooks persist every prompt and reply the moment they happen and inject relevant memories at session start and per prompt — scoped to you and your repository, session-safe by contract (memory being down can never break a session). Includes the full MemorySync MCP tool set.",
+    "longDescription": "MemorySync gives Codex durable memory: lifecycle hooks send every prompt for fact extraction the moment you submit it, storing only the durable facts in it (Codex's replies are not stored), and inject relevant memories at session start and per prompt — scoped to you and your repository, session-safe by contract (memory being down can never break a session). Includes the full MemorySync MCP tool set.",
     "developerName": "MemorySync",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],

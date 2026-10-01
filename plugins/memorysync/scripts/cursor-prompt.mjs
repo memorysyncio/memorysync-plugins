@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
- * Cursor `beforeSubmitPrompt` hook: persist the user's message in a
- * detached process and let the prompt through immediately.
+ * Cursor `beforeSubmitPrompt` hook: send the user's message to fact
+ * extraction in a detached process and let the prompt through
+ * immediately. Only the durable facts extracted from it are stored;
+ * Cursor's replies are not sent (cursor-stop.mjs sends nothing).
  *
  * Cursor hooks cannot inject model context (their output contract is
  * allow/deny/message only), so recall on Cursor rides the bundled
@@ -42,7 +44,7 @@ main(async () => {
       env: { ...process.env, MEMORYSYNC_HOOK_PAYLOAD: encoded },
     }).unref()
   } catch {
-    // Detach unavailable: persist inline with a tight cap instead.
+    // Detach unavailable: send inline with a tight cap instead.
     try {
       const base = baseUrl()
       const tenant = await resolveTenantId({ key, base })

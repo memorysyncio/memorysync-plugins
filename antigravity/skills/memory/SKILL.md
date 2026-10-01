@@ -5,15 +5,15 @@ description: Long-term memory for this user and project via MemorySync. Use when
 
 # MemorySync memory
 
-This plugin gives you two memory planes. Both are scoped to this user; conversation turns are additionally scoped to this project.
+This plugin fills one memory, scoped to this user, in two ways. Facts captured from prompts in this project are also tagged with the project.
 
-1. **Automatic (already running):** lifecycle hooks persist every exchange and inject relevant memories at session start and per prompt. You do not need to do anything for conversation history to be remembered.
+1. **Automatic (already running):** lifecycle hooks send every user prompt to MemorySync, which extracts and stores the durable facts in it, and inject relevant memories at session start and per prompt. Your own replies are not stored: a decision or convention that appears only in your reply is remembered only if you save it with the tools below.
 2. **Curated (yours):** the `memorysync` MCP tools store and manage durable facts.
 
 ## When to use the tools
 
 - **Before answering questions about past work, preferences or decisions** — call `search_memory` with a natural-language query if the injected context does not already answer it.
-- **When a durable fact appears** (a preference, a correction, an architectural decision, a convention, feedback) — call `add_memory` with ONE clear, self-contained statement. Do not wait to be told "remember this". Do not store transient chit-chat, secrets, API keys or credentials.
+- **When a durable fact appears in your own work** (an architectural decision you reached with the user, a convention you found in the code, a correction to something stored) — call `add_memory` with ONE clear, self-contained statement. Do not wait to be told "remember this". Facts the user states in a prompt are already captured by the hooks, so do not save them again. Do not store transient chit-chat, secrets, API keys or credentials.
 - **When the user asks to forget something** — find it with `search_memory` or `list_memories`, then `delete_memory` with the id.
 - **"What do you remember about me?"** — `list_memories`, newest first.
 

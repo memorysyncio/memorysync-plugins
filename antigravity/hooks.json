@@ -29,7 +29,7 @@
       {
         "hooks": [
           {
-            "name": "memorysync-capture-reply",
+            "name": "memorysync-stop",
             "type": "command",
             "command": "node \"${extensionPath}/scripts/codex-stop.mjs\" antigravity",
             "timeout": 20

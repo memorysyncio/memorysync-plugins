@@ -5,12 +5,14 @@
  * 1. Recall memories relevant to THIS prompt and inject them alongside
  *    it (synchronous — injection requires the hook's stdout — but hard
  *    capped so a slow network can only ever cost a few quiet seconds).
- * 2. Persist the user's message as a verbatim turn — in a DETACHED
- *    child process, so persistence adds zero latency to the turn.
+ * 2. Send the user's message to MemorySync for fact extraction — in a
+ *    DETACHED child process, so capture adds zero latency to the turn.
+ *    Only the durable facts extracted from it are stored; the reply that
+ *    follows is not sent (the Stop hooks send nothing).
  *
  * Recall is skipped for tiny prompts ("yes", "continue") and when
- * MEMORYSYNC_PROMPT_RECALL=off; persistence still happens. Exit 0 on
- * every path.
+ * MEMORYSYNC_PROMPT_RECALL=off; capture still happens. Exit 0 on every
+ * path.
  */
 
 import { spawn } from 'node:child_process'
@@ -47,8 +49,8 @@ main(async () => {
   const userId = resolveUserId()
   const base = baseUrl()
 
-  // 2. Persistence of the user turn. Locally: a DETACHED child, so the
-  // turn pays zero latency. In cloud/Cowork sessions ($CLAUDE_CODE_REMOTE):
+  // 2. Capture of the user turn. Locally: a DETACHED child, so the turn
+  // pays zero latency. In cloud/Cowork sessions ($CLAUDE_CODE_REMOTE):
   // inline with a short cap — a sandbox may reap detached children when
   // the hook exits, and a quietly lost turn is worse than ~1s of latency.
   const payload = { role: 'human', text: prompt, cwd, claudeSessionId: event.session_id || null }

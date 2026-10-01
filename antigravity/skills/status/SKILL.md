@@ -19,4 +19,4 @@ What the fields mean:
 - **API key NOT SET** — memory is off. The fix: create a key at https://app.memorysync.io, then `export MEMORYSYNC_API_KEY=ms_...` (or `setx MEMORYSYNC_API_KEY ms_...` on Windows) and restart Claude Code.
 - **Tenant namespace: default** — an evaluation key; memory works, with evaluation limits.
 - **API reachability FAILED** — the hooks skip silently until the network or service recovers; sessions are unaffected.
-- **Project scope** — where this repo's conversation memory lives. Override with `MEMORYSYNC_PROJECT` for monorepos.
+- **Project scope** — the project that facts captured from this repo's prompts are tagged with, and that session-start recall asks about. Override with `MEMORYSYNC_PROJECT` for monorepos.

@@ -48,9 +48,13 @@ GitHub redirects the old name, so existing Claude installs keep
 updating). Its content is exactly this folder minus `tests/`:
 
 1. Bump `version` in every manifest that carries one (Claude plugin +
-   marketplace entry, Cursor plugin + marketplace entry, Codex plugin) —
-   they must agree; `claude plugin tag plugins/memorysync` checks the
-   Claude pair.
+   marketplace entry, Cursor plugin + marketplace entry, Codex plugin) and
+   `PLUGIN_VERSION` in `plugins/memorysync/scripts/lib.mjs` (the version
+   every request's User-Agent announces) — they must agree;
+   `claude plugin tag plugins/memorysync` checks the Claude pair and
+   `tests/hooks.test.mjs` checks all of them. The Antigravity bundle
+   (`antigravity/plugin.json`) and the builder plugin carry their own
+   versions.
 2. Copy `.claude-plugin/`, `.cursor-plugin/`, `.codex-plugin/`,
    `marketplace.json`, `plugins/`, `examples/` and this README to the
    public repo checkout; commit and push to `main`.

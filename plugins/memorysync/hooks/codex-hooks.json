@@ -1,5 +1,5 @@
 {
-  "description": "MemorySync automatic memory for Codex: recall at session start and per prompt (injected as additional context), capture of every completed exchange. Every hook exits 0 on every failure — memory being down can never break a session.",
+  "description": "MemorySync automatic memory for Codex: recall at session start and per prompt (injected as additional context), and every prompt sent for fact extraction (only durable facts are stored; the Stop hook sends nothing, because assistant replies are not stored). Every hook exits 0 on every failure — memory being down can never break a session.",
   "hooks": {
     "SessionStart": [
       {

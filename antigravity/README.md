@@ -3,10 +3,11 @@
 Automatic long-term memory for [Antigravity](https://antigravity.google)
 agents — AGY, the AGY IDE, and the AGY CLI — backed by
 [MemorySync](https://memorysync.io). Lifecycle hooks inject relevant
-memories at session start and per prompt and capture every exchange; the
-full MemorySync MCP tool set, four skills, and an always-on recall rule
-come along. Hooks are dependency-free **Node** scripts: Windows, macOS
-and Linux natively (Mem0's Antigravity hooks are bash-only).
+memories at session start and per prompt and capture the durable facts in
+your prompts; the full MemorySync MCP tool set, four skills, and an
+always-on recall rule come along. Hooks are dependency-free **Node**
+scripts: Windows, macOS and Linux natively (Mem0's Antigravity hooks are
+bash-only).
 
 ## Install
 
@@ -47,13 +48,15 @@ registration handles the browser sign-in automatically.
 | Moment | What happens |
 | --- | --- |
 | Session start | Recalls your profile and project context, injected as additional context. |
-| Every prompt (≥ 24 chars) | Recalls memories relevant to the prompt; persists your message in a detached process (zero added latency). |
-| Reply finishes (Stop) | Persists the reply with tolerant extraction — documented fields first, a bounded transcript-tail parse second, silent skip otherwise. |
+| Every prompt | Recalls memories relevant to the prompt (prompts of 24+ characters); sends your message for fact extraction in a detached process (zero added latency) — only the durable facts in it are stored. |
+| Reply finishes (Stop) | Nothing is sent — assistant replies are not stored. |
 | Any failure — no key, network down, monthly quota exhausted | Silent skip, exit 0. Memory can never break an Antigravity session. |
 
-Turns store under the `antigravity::` transcript scope — separate from
-your Claude Code, Cursor, Codex, OpenCode and Devin transcripts, same
-shared memories everywhere.
+Facts captured here carry the `antigravity::` session key (plus the
+project), which tells them apart from facts captured in Claude Code,
+Cursor, Codex, OpenCode and Devin; the memories themselves are shared
+everywhere. A retried or redelivered hook is recognised server-side, so
+a prompt's facts are extracted once.
 
 ## Uninstall (the part everyone misses)
 

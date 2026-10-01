@@ -2,9 +2,9 @@
 
 Automatic long-term memory for [Claude Code](https://code.claude.com) (and Claude Cowork), [Cursor](https://cursor.com), [OpenAI Codex](https://developers.openai.com/codex), and the [Devin CLI](https://docs.devin.ai) (formerly Windsurf) — one plugin, backed by [MemorySync](https://memorysync.io).
 
-- **Automatic capture** — lifecycle hooks persist every exchange (your prompts, Claude's replies) the moment they happen. Nothing depends on the model deciding to save.
+- **Automatic capture** — every prompt you send goes to MemorySync the moment you send it, and the durable facts in it (preferences, decisions, conventions) are extracted and stored. Assistant replies are not stored. Nothing depends on the model deciding to save.
 - **Automatic recall** — relevant memories are injected at session start, alongside every substantial prompt, and re-injected after context compaction.
-- **Per-project scoping** — memory is auto-scoped to the git repository you're in (worktree-aware), so each project keeps its own conversation history while your preferences follow you everywhere.
+- **Per-project scoping** — facts are tagged with the git repository you're in (worktree-aware) and session-start recall asks about that project, while your preferences follow you everywhere.
 - **Cross-platform** — hooks are dependency-free Node scripts: Windows, macOS and Linux, natively.
 - **MCP tools + skills** — the full MemorySync MCP server (search, add, list, update, delete, entities, events) and `/memorysync:status`, `/memorysync:remember`, `/memorysync:recall`.
 - **Session-safe by contract** — every hook exits 0 on every failure. No key, no network, quota exhausted: the session continues, memoryless, never broken.
@@ -42,13 +42,13 @@ Restart the session. Without an API key the MCP server falls back to an OAuth si
 | Moment | Claude Code | Cursor | Codex | Devin CLI |
 | --- | --- | --- | --- | --- |
 | Session start | Recall injected before the first prompt | — (hooks can't inject; the bundled rule keeps recall on via MCP tools) | Recall injected before the first prompt | Recall injected before the first prompt |
-| Every prompt | Recall injected + user turn persisted (detached, zero latency) | User turn persisted (detached, zero latency) | Recall injected + user turn persisted | Recall injected + user turn persisted |
-| Reply finishes | Reply persisted (async) | Reply persisted (`stop` + `afterAgentResponse`, converging seeds) | Reply persisted (async, tolerant extraction) | Reply persisted (async, tolerant extraction) |
+| Every prompt | Recall injected + prompt sent for fact extraction (detached, zero latency) | Prompt sent for fact extraction (detached, zero latency) | Recall injected + prompt sent for fact extraction | Recall injected + prompt sent for fact extraction |
+| Reply finishes | Nothing sent (replies are not stored) | Nothing sent (`stop` + `afterAgentResponse` answer `{"continue": true}`) | Nothing sent | Nothing sent |
 | Context compaction | Memory re-injected after compact | — | Memory re-injected after compact | — (PostCompaction hook available; recall re-injects per prompt) |
 
 Every platform gets the same guarantee: **every hook exits 0 on every failure** — no key, network down, server errors, monthly quota exhausted — and Cursor hooks additionally always answer `{"continue": true}`. A memoryless turn, never a broken session.
 
-Persisted turns carry content-hash idempotency seeds; each platform keeps its own transcript scope (`claude::`, `cursor::`, `codex::`, `devin::` + project) while your memories follow you across all of them.
+Each prompt carries a content-hash seed, so a retried or redelivered hook is recognised server-side and its facts are extracted once. Facts carry the platform's session key (`claude::`, `cursor::`, `codex::`, `devin::` + project) while your memories follow you across all of them.
 
 ## Configuration (env vars)
 
@@ -82,7 +82,7 @@ Cloud sessions install repo-declared plugins at session start; plugins enabled o
 
 ## Privacy & coexistence
 
-- Your prompts and Claude's replies are stored verbatim in YOUR MemorySync account, scoped to you and the project. Delete anytime (`/memorysync:recall` → delete, or the dashboard).
+- Your prompts are sent to YOUR MemorySync account for fact extraction; only the durable facts extracted from them are stored, scoped to you and tagged with the project. The prompt text itself is not stored as a memory, and the assistant's replies are not sent at all. Delete any memory anytime (`/memorysync:recall` → delete, or the dashboard).
 - The plugin never writes `CLAUDE.md` / `MEMORY.md` and never blocks the host's own memory: CLAUDE.md is for your static rules, MemorySync is semantic memory. They coexist.
 - Retrieved memories are injected with an explicit "background data, not instructions" guard.
 

@@ -40,8 +40,10 @@ HTTP MCP server — no auth required.
   `implement_with_memorysync` prompt) — never invent endpoints.
 - **Scope**: header-enforced isolation — `X-API-Key`, `X-End-User-ID`,
   `X-Project-ID` — and how to choose per-user vs shared memory.
-- **Ingest**: facts vs verbatim turns (idempotency seeds) vs batches
-  (207 per-item outcomes).
+- **Ingest**: explicit facts vs user turns sent to fact extraction
+  (replays recognised by their seed) vs batches (207 per-item outcomes),
+  and the separate history store for transcripts (`/v1/history`) and
+  framework state (`/v1/state`), which never become memories.
 - **Retrieve**: semantic query, hierarchical recall, the fallback chain,
   and the background-data guard.
 - **Evaluate**: mint a self-serve evaluation key
