@@ -10,8 +10,8 @@
     {
       "name": "memorysync",
       "source": "./plugins/memorysync",
-      "description": "Automatic long-term memory for Claude Code and Claude Cowork: cross-platform lifecycle hooks capture the durable facts in your prompts and recall relevant context per project, plus the MemorySync MCP server and memory skills.",
-      "version": "1.4.0",
+      "description": "Automatic long-term memory for Claude Code and Claude Cowork: cross-platform lifecycle hooks capture the durable facts in your prompts, recall relevant context per project and surface past fixes when a shell command fails, plus the MemorySync MCP server and memory skills.",
+      "version": "1.5.0",
       "author": {
         "name": "MemorySync"
       },
@@ -23,7 +23,7 @@
       "name": "building-with-memorysync",
       "source": "./building-with-memorysync",
       "description": "Build applications that use MemorySync: a decision-layer skill for scoping projects and end users, ingesting, retrieving, and evaluating — paired with the zero-auth MemorySync documentation MCP server as ground truth.",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "author": {
         "name": "MemorySync"
       },

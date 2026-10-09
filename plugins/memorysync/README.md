@@ -41,14 +41,41 @@ Restart the session. Without an API key the MCP server falls back to an OAuth si
 
 | Moment | Claude Code | Cursor | Codex | Devin CLI |
 | --- | --- | --- | --- | --- |
-| Session start | Recall injected before the first prompt | — (hooks can't inject; the bundled rule keeps recall on via MCP tools) | Recall injected before the first prompt | Recall injected before the first prompt |
-| Every prompt | Recall injected + prompt sent for fact extraction (detached, zero latency) | Prompt sent for fact extraction (detached, zero latency) | Recall injected + prompt sent for fact extraction | Recall injected + prompt sent for fact extraction |
-| Reply finishes | Nothing sent (replies are not stored) | Nothing sent (`stop` + `afterAgentResponse` answer `{"continue": true}`) | Nothing sent | Nothing sent |
-| Context compaction | Memory re-injected after compact | — | Memory re-injected after compact | — (PostCompaction hook available; recall re-injects per prompt) |
+| Session start | Recall injected before the first prompt | Recall injected as `additional_context` (`sessionStart`) | Recall injected before the first prompt | Recall injected before the first prompt |
+| Every prompt | Recall injected + prompt sent for fact extraction (detached, zero latency) | Prompt sent for fact extraction (`beforeSubmitPrompt`; always `{"continue": true}`) | Recall injected + prompt sent for fact extraction | Recall injected + prompt sent for fact extraction |
+| Tool failure | — | Failed tool output captured as a durable fact (`postToolUseFailure`) | — | — |
+| Reply finishes | Nothing sent (replies are not stored) | Retry-spool flush (`stop`); empty JSON, never a follow-up | Nothing sent | Nothing sent |
+| Context compaction | Memory re-injected after compact | Retry-spool flush (`preCompact`) | Memory re-injected after compact | — (PostCompaction hook available; recall re-injects per prompt) |
+| Session end | — | Retry-spool flush (`sessionEnd`) | — | — |
 
-Every platform gets the same guarantee: **every hook exits 0 on every failure** — no key, network down, server errors, monthly quota exhausted — and Cursor hooks additionally always answer `{"continue": true}`. A memoryless turn, never a broken session.
+Every platform gets the same guarantee: **every hook exits 0 on every failure** — no key, network down, server errors, monthly quota exhausted. Cursor `beforeSubmitPrompt` always answers `{"continue": true}`; the other Cursor events (`sessionStart`, `stop`, `preCompact`, `sessionEnd`, `postToolUseFailure`) answer empty JSON or `additional_context` only. A memoryless turn, never a broken session.
 
 Each prompt carries a content-hash seed, so a retried or redelivered hook is recognised server-side and its facts are extracted once. Facts carry the platform's session key (`claude::`, `cursor::`, `codex::`, `devin::` + project) while your memories follow you across all of them.
+
+## Skills
+
+| Skill | When to use it |
+| --- | --- |
+| `memory` | How automatic capture/recall works here, and when to call the MCP tools yourself |
+| `recall` | Search stored facts (`/memorysync:recall`, "what do you remember about…") |
+| `remember` | Save one durable fact (`/memorysync:remember`) |
+| `status` | Key, connectivity, identity, project scope, retry spool |
+| `setup` | Connect an API key and get MCP/hooks actually running |
+| `troubleshoot` | Recall empty, facts not saving, or memory looking "down" |
+| `privacy` | What is captured, how to keep secrets out, how to opt a project off |
+| `forget` | Delete specific memories the user confirmed |
+| `correct-memory` | Replace a stale fact instead of leaving two that disagree |
+| `review-memories` | List what is stored before changing anything |
+| `resume-work` | Reconstruct where this repo left off |
+| `handoff` | Write a "where we stopped / next steps" note for the next session |
+| `project-context` | Load this repo's conventions, decisions and gotchas |
+| `decision-log` | Record an architecture/product decision and why |
+| `preferences` | Capture or apply standing coding/tooling preferences |
+| `conventions` | Find or record team rules discovered in the codebase |
+| `debug-history` | Search past fixes before debugging; save the cause after |
+| `memory-hygiene` | Collapse duplicate or contradicting facts (with confirmation) |
+| `export-memories` | Write memories to markdown when the user asks for a backup |
+| `import-memories` | Turn AGENTS.md / CLAUDE.md rules into individual facts (with confirmation) |
 
 ## Configuration (env vars)
 

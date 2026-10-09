@@ -3,28 +3,26 @@
  * Cursor `beforeSubmitPrompt` hook: send the user's message to fact
  * extraction in a detached process and let the prompt through
  * immediately. Only the durable facts extracted from it are stored;
- * Cursor's replies are not sent (cursor-stop.mjs sends nothing).
+ * Cursor's replies are not sent.
  *
- * Cursor hooks cannot inject model context (their output contract is
- * allow/deny/message only), so recall on Cursor rides the bundled
- * `rules/memorysync.mdc` rule + the MCP tools instead — this hook's
- * only job is capture, and its only promise is `{"continue": true}`
- * on every path, always, in under a second.
+ * `beforeSubmitPrompt` cannot add model context (its output is
+ * allow/block only), so recall on Cursor comes from the `sessionStart`
+ * hook (session-start.mjs), the failed-command hook (tool-failure.mjs),
+ * the bundled `rules/memorysync.mdc` rule and the MCP tools. This hook's
+ * only job is capture, and its only promise is `{"continue": true}` on
+ * every path, always, in under a second. A prompt the network refused
+ * waits in the retry spool until the `stop` hook (flush.mjs) delivers it.
  */
 
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { join, dirname } from 'node:path'
 
-import { addTurn, apiKey, baseUrl, main, networkDisabled, readStdin, resolveProject, resolveTenantId, resolveUserId } from './lib.mjs'
-
-function allow() {
-  process.stdout.write(JSON.stringify({ continue: true }))
-}
+import { apiKey, baseUrl, captureTurn, eventCwd, main, networkDisabled, readStdin, resolveProject, resolveUserId, respond } from './lib.mjs'
 
 main(async () => {
   const event = await readStdin()
-  allow() // the answer never depends on what follows
+  respond({ continue: true }) // the answer never depends on what follows
 
   if (networkDisabled()) return
   const key = apiKey()
@@ -32,7 +30,7 @@ main(async () => {
 
   const prompt = String(event.prompt || event.user_message || event.text || '').trim()
   if (!prompt) return
-  const cwd = event.cwd || event.workspace_root || process.cwd()
+  const cwd = eventCwd(event)
   const payload = { role: 'human', text: prompt, cwd, claudeSessionId: event.session_id || event.conversation_id || null }
 
   try {
@@ -45,20 +43,14 @@ main(async () => {
     }).unref()
   } catch {
     // Detach unavailable: send inline with a tight cap instead.
-    try {
-      const base = baseUrl()
-      const tenant = await resolveTenantId({ key, base })
-      await addTurn({
-        key, base, tenant,
-        userId: resolveUserId(),
-        role: 'human',
-        text: prompt,
-        project: resolveProject(cwd),
-        claudeSessionId: payload.claudeSessionId,
-        timeoutMs: 3000,
-      })
-    } catch {
-      /* capture is best-effort; the prompt already went through */
-    }
+    await captureTurn({
+      key,
+      base: baseUrl(),
+      userId: resolveUserId(),
+      text: prompt,
+      project: resolveProject(cwd),
+      agentSession: payload.claudeSessionId,
+      timeoutMs: 3000,
+    })
   }
 })

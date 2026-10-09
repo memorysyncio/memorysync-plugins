@@ -8,7 +8,8 @@
  * 2. Send the user's message to MemorySync for fact extraction — in a
  *    DETACHED child process, so capture adds zero latency to the turn.
  *    Only the durable facts extracted from it are stored; the reply that
- *    follows is not sent (the Stop hooks send nothing).
+ *    follows is not sent. A prompt the network refused waits in the
+ *    retry spool for the Stop hook (flush.mjs) to deliver.
  *
  * Recall is skipped for tiny prompts ("yes", "continue") and when
  * MEMORYSYNC_PROMPT_RECALL=off; capture still happens. Exit 0 on every
@@ -20,9 +21,10 @@ import { fileURLToPath } from 'node:url'
 import { join, dirname } from 'node:path'
 
 import {
-  addTurn,
   apiKey,
   baseUrl,
+  captureTurn,
+  eventCwd,
   main,
   networkDisabled,
   readStdin,
@@ -44,7 +46,7 @@ main(async () => {
   const prompt = String(event.prompt || '').trim()
   if (!prompt) return
 
-  const cwd = event.cwd || process.cwd()
+  const cwd = eventCwd(event)
   const project = resolveProject(cwd)
   const userId = resolveUserId()
   const base = baseUrl()
@@ -71,22 +73,7 @@ main(async () => {
   }
 
   if (persistInline) {
-    try {
-      const tenantForPersist = await resolveTenantId({ key, base })
-      await addTurn({
-        key,
-        base,
-        tenant: tenantForPersist,
-        userId,
-        role: 'human',
-        text: prompt,
-        project,
-        claudeSessionId: payload.claudeSessionId,
-        timeoutMs: 3000,
-      })
-    } catch {
-      /* best-effort — never surface */
-    }
+    await captureTurn({ key, base, userId, text: prompt, project, agentSession: payload.claudeSessionId, timeoutMs: 3000 })
   }
 
   // 1. Synchronous recall for injection.

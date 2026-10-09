@@ -2,12 +2,14 @@
 /**
  * Detached capture worker. Receives one prompt as a base64 JSON payload
  * in MEMORYSYNC_HOOK_PAYLOAD and sends it to fact extraction
- * (lib.addTurn, which sends user turns only). Runs outside the hook's
- * lifetime so capture never adds latency to a turn. Silent on every
- * failure.
+ * (lib.captureTurn, which sends user turns only). Runs outside the hook's
+ * lifetime so capture never adds latency to a turn. When the send fails
+ * in a way a retry can fix (network, timeout, server error, rate limit),
+ * the prompt is kept in the local retry spool for flush.mjs to deliver.
+ * Silent on every failure.
  */
 
-import { addTurn, apiKey, baseUrl, main, networkDisabled, resolveProject, resolveTenantId, resolveUserId } from './lib.mjs'
+import { apiKey, baseUrl, captureTurn, main, networkDisabled, resolveProject, resolveUserId } from './lib.mjs'
 
 main(async () => {
   if (networkDisabled()) return
@@ -23,16 +25,12 @@ main(async () => {
   const text = String(payload.text || '').trim()
   if (!text) return
 
-  const base = baseUrl()
-  const tenant = await resolveTenantId({ key, base })
-  await addTurn({
+  await captureTurn({
     key,
-    base,
-    tenant,
+    base: baseUrl(),
     userId: resolveUserId(),
-    role,
     text,
     project: resolveProject(payload.cwd || process.cwd()),
-    claudeSessionId: payload.claudeSessionId || null,
+    agentSession: payload.claudeSessionId || null,
   })
 })

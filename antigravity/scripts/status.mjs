@@ -2,11 +2,23 @@
 /**
  * Diagnostic for /memorysync:status — prints a plain-text report of
  * everything a user needs to debug the plugin: key presence, API
- * reachability, tenant namespace, resolved identity and project scope.
+ * reachability, tenant namespace, resolved identity and project scope,
+ * and prompts waiting in the retry spool.
  * Never exits nonzero (it is run inside a session).
  */
 
-import { apiKey, baseUrl, main, networkDisabled, resolveProject, resolveTenantId, resolveUserId, sessionKey } from './lib.mjs'
+import {
+  apiKey,
+  baseUrl,
+  main,
+  networkDisabled,
+  pendingSpoolCount,
+  resolveProject,
+  resolveTenantId,
+  resolveUserId,
+  sessionKey,
+  spoolDir,
+} from './lib.mjs'
 
 main(async () => {
   const lines = []
@@ -24,6 +36,14 @@ main(async () => {
   lines.push(`Project scope: ${project} ${process.env.MEMORYSYNC_PROJECT ? '(from MEMORYSYNC_PROJECT)' : '(auto-detected; override with MEMORYSYNC_PROJECT)'}`)
   lines.push(`Conversation key: ${sessionKey(project)}`)
   lines.push(`Per-prompt recall: ${(process.env.MEMORYSYNC_PROMPT_RECALL || '').toLowerCase() === 'off' ? 'off (MEMORYSYNC_PROMPT_RECALL=off)' : 'on'}`)
+  lines.push(`Failed-command lookup: ${(process.env.MEMORYSYNC_FAILURE_RECALL || '').toLowerCase() === 'off' ? 'off (MEMORYSYNC_FAILURE_RECALL=off)' : 'on'}`)
+
+  if (key) {
+    const pending = pendingSpoolCount({ key, base })
+    lines.push(
+      `Retry spool: ${pending ? `${pending} prompt(s) waiting to be sent (${spoolDir({ key, base })}) — delivered by the next stop, compaction or session-end hook once the API is reachable.` : 'empty'}`,
+    )
+  }
 
   if (key && !networkDisabled()) {
     try {

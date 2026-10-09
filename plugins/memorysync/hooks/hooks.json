@@ -1,5 +1,5 @@
 {
-  "description": "MemorySync automatic memory: recall at session start and per prompt, and every prompt sent for fact extraction (only durable facts are stored; the Stop hook sends nothing, because assistant replies are not stored). Every hook exits 0 on every failure — memory being down can never break a session.",
+  "description": "MemorySync automatic memory: recall at session start, after compaction and per prompt; every prompt sent for fact extraction (only durable facts are stored; assistant replies are never sent); notes about a failed shell command looked up and added next to the error; prompts the network refused retried from a local spool when a turn ends, and stale local files pruned at session end. Every hook exits 0 on every failure — memory being down can never break a session.",
   "hooks": {
     "SessionStart": [
       {
@@ -39,15 +39,40 @@
         ]
       }
     ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/tool-failure.mjs"],
+            "timeout": 8
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
             "command": "node",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/stop.mjs"],
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/flush.mjs"],
             "timeout": 20,
             "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/flush.mjs"],
+            "timeout": 5
           }
         ]
       }

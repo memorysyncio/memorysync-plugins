@@ -1,5 +1,5 @@
 {
-  "description": "MemorySync automatic memory for Codex: recall at session start and per prompt (injected as additional context), and every prompt sent for fact extraction (only durable facts are stored; the Stop hook sends nothing, because assistant replies are not stored). Every hook exits 0 on every failure — memory being down can never break a session.",
+  "description": "MemorySync automatic memory for Codex: recall at session start, after compaction and per prompt (injected as additional context); every prompt sent for fact extraction (only durable facts are stored; Codex's replies are never sent); prompts the network refused retried from a local spool when a turn ends. Every hook exits 0 on every failure — memory being down can never break a session.",
   "hooks": {
     "SessionStart": [
       {
@@ -44,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${PLUGIN_ROOT}/scripts/codex-stop.mjs\" codex",
+            "command": "node \"${PLUGIN_ROOT}/scripts/flush.mjs\" codex",
             "timeout": 20,
             "async": true
           }

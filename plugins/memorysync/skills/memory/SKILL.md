@@ -1,6 +1,6 @@
 ---
 name: memory
-description: Long-term memory for this user and project via MemorySync. Use when the user asks what you remember, refers to past sessions or decisions, asks you to remember or forget something, or when durable facts about the user or project would help future sessions.
+description: How MemorySync long-term memory works in this session — what the hooks capture and inject on their own, and when to call the memorysync MCP tools yourself. Use when the user refers to past sessions or asks how memory works here, or when a durable fact surfaces in your own work and no more specific MemorySync skill fits.
 ---
 
 # MemorySync memory

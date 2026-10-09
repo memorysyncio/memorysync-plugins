@@ -1,15 +1,24 @@
 #!/usr/bin/env node
 /**
- * SessionStart hook (matchers: startup|resume|clear, and compact for
- * post-compaction re-injection): recall what MemorySync knows about
- * this user and project and inject it as additionalContext before the
- * first prompt. Exit 0 on every path — a memoryless session start is
- * normal; a broken one is never acceptable.
+ * Session-start hook: recall what MemorySync knows about this user and
+ * project and inject it before the first prompt.
+ *
+ * - Claude Code, Codex, Devin, Antigravity (`SessionStart`; on Claude
+ *   Code and Codex also matcher `compact`, for post-compaction
+ *   re-injection): `hookSpecificOutput.additionalContext`, or nothing.
+ * - Cursor (`sessionStart`, cursor platform argument): the project comes
+ *   from `workspace_roots[0]`; the answer is `{"additional_context": ...}`,
+ *   which Cursor adds to the conversation's initial context, or `{}`.
+ *
+ * Exit 0 on every path — a memoryless session start is normal; a broken
+ * one is never acceptable.
  */
 
 import {
+  PLATFORM,
   apiKey,
   baseUrl,
+  eventCwd,
   main,
   networkDisabled,
   readStdin,
@@ -18,16 +27,16 @@ import {
   resolveProject,
   resolveTenantId,
   resolveUserId,
+  respond,
 } from './lib.mjs'
 
-main(async () => {
-  if (networkDisabled()) return
-  const key = apiKey()
-  if (!key) return
-
+async function recall() {
   const event = await readStdin()
-  const cwd = event.cwd || process.cwd()
-  const project = resolveProject(cwd)
+  if (networkDisabled()) return ''
+  const key = apiKey()
+  if (!key) return ''
+
+  const project = resolveProject(eventCwd(event))
   const userId = resolveUserId()
   const base = baseUrl()
 
@@ -41,15 +50,14 @@ main(async () => {
     k: 8,
     timeoutMs: 6000,
   })
-  const block = renderContext(context, project)
-  if (!block) return
+  return renderContext(context, project)
+}
 
-  process.stdout.write(
-    JSON.stringify({
-      hookSpecificOutput: {
-        hookEventName: 'SessionStart',
-        additionalContext: block,
-      },
-    }),
-  )
+main(async () => {
+  const block = await recall().catch(() => '')
+  if (PLATFORM === 'cursor') {
+    respond(block ? { additional_context: block } : {})
+  } else if (block) {
+    respond({ hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: block } })
+  }
 })

@@ -4,7 +4,7 @@ description: Guide for building, reviewing, evaluating, and troubleshooting appl
 license: MIT
 metadata:
   author: memorysync
-  version: "1.1.1"
+  version: "1.2.0"
   docs-mcp: "https://docs.memorysync.io/mcp"
 ---
 

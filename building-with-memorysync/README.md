@@ -1,4 +1,4 @@
-# Build with MemorySync — the builder plugin
+# MemorySync Docs — the builder plugin
 
 Helps Claude Code, Cursor, Codex, and any AgentSkills-compatible coding
 agent **build applications that use [MemorySync](https://memorysync.io)**.

@@ -1,22 +1,49 @@
 {
   "version": 1,
+  "description": "MemorySync automatic memory for Cursor: recall injected at session start, every prompt sent for fact extraction (only durable facts are stored; replies are never sent), notes about a failed shell command looked up and shown next to the error, and prompts the network refused retried from a local spool at stop, compaction and session end. Every hook exits 0 and answers valid JSON on every path — memory being down can never break a session.",
   "hooks": {
+    "sessionStart": [
+      {
+        "command": "node \"${PLUGIN_ROOT}/scripts/session-start.mjs\" cursor",
+        "timeout": 15
+      }
+    ],
     "beforeSubmitPrompt": [
       {
         "command": "node \"${PLUGIN_ROOT}/scripts/cursor-prompt.mjs\" cursor",
         "timeout": 10
       }
     ],
-    "stop": [
+    "postToolUse": [
       {
-        "command": "node \"${PLUGIN_ROOT}/scripts/cursor-stop.mjs\" cursor",
-        "timeout": 20
+        "command": "node \"${PLUGIN_ROOT}/scripts/tool-failure.mjs\" cursor",
+        "matcher": "Shell",
+        "timeout": 8
       }
     ],
-    "afterAgentResponse": [
+    "postToolUseFailure": [
       {
-        "command": "node \"${PLUGIN_ROOT}/scripts/cursor-stop.mjs\" cursor",
-        "timeout": 20
+        "command": "node \"${PLUGIN_ROOT}/scripts/tool-failure.mjs\" cursor",
+        "matcher": "Shell",
+        "timeout": 8
+      }
+    ],
+    "preCompact": [
+      {
+        "command": "node \"${PLUGIN_ROOT}/scripts/flush.mjs\" cursor",
+        "timeout": 10
+      }
+    ],
+    "stop": [
+      {
+        "command": "node \"${PLUGIN_ROOT}/scripts/flush.mjs\" cursor",
+        "timeout": 10
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "node \"${PLUGIN_ROOT}/scripts/flush.mjs\" cursor",
+        "timeout": 15
       }
     ]
   }

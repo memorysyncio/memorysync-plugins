@@ -29,9 +29,9 @@
       {
         "hooks": [
           {
-            "name": "memorysync-stop",
+            "name": "memorysync-flush",
             "type": "command",
-            "command": "node \"${extensionPath}/scripts/codex-stop.mjs\" antigravity",
+            "command": "node \"${extensionPath}/scripts/flush.mjs\" antigravity",
             "timeout": 20
           }
         ]

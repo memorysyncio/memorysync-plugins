@@ -1,6 +1,6 @@
 ---
 name: status
-description: Show MemorySync plugin status — API key, connectivity, identity and project scope. Use when the user runs /memorysync:status or asks whether MemorySync memory is working, configured or connected.
+description: Show MemorySync plugin status — API key, connectivity, identity, project scope and prompts waiting to be retried. Use when the user runs /memorysync:status or asks whether MemorySync is configured and connected.
 disable-model-invocation: false
 ---
 
@@ -20,3 +20,4 @@ What the fields mean:
 - **Tenant namespace: default** — an evaluation key; memory works, with evaluation limits.
 - **API reachability FAILED** — the hooks skip silently until the network or service recovers; sessions are unaffected.
 - **Project scope** — the project that facts captured from this repo's prompts are tagged with, and that session-start recall asks about. Override with `MEMORYSYNC_PROJECT` for monorepos.
+- **Retry spool** — prompts that could not be sent when typed (network down, server error, rate limit). They are delivered automatically by the next stop, compaction or session-end hook once the API is reachable, and dropped after seven days.
