@@ -11,6 +11,6 @@
   "homepage": "https://docs.memorysync.io/guides/agent-built-integrations",
   "repository": "https://github.com/memorysyncio/memorysync-plugins",
   "license": "MIT",
-  "logo": "assets/logo.png",
+  "icon": "assets/logo.png",
   "keywords": ["memorysync", "agent-memory", "integration", "mcp", "skill"]
 }

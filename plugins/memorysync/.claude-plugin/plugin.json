@@ -11,7 +11,7 @@
   "homepage": "https://docs.memorysync.io/guides/claude-code",
   "repository": "https://github.com/memorysyncio/memorysync-plugins",
   "license": "MIT",
-  "logo": "assets/logo.png",
+  "icon": "assets/logo.png",
   "keywords": [
     "memory",
     "agent-memory",
